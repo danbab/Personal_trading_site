@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="{{ url_for('static', filename = 'search.css') }}">
+        {% with messages=get_flashed_messages()%}
+        {% if messages %}
+            <script>
+                alert("{{messages[-1]}}")
+            </script>
+        {% endif %}
+        {%endwith%}
+
+    </head>
+    <body>
+        <header>
+            <a href='{{ url_for('home') }}'>
+                <img class='logo' src="{{ url_for('static', filename = 'logo.png') }}">
+            </a>
+                <form class='searchBar' action='{{url_for('search',keyword='keyword')}}' method='POST'>
+                    <select name='searchBar' class='searchTxt'>
+                        <option selected hidden value='default'>키워드 검색</option>
+                         <option value='패션·미용'>패션·미용</option>
+                        <option value='디지털·가전'>디지털·가전</option>
+                        <option value='스포츠·차량'>스포츠·차량</option>
+                        <option value='음반·악기'>음반·악기</option>
+                        <option value='완구'>완구</option>
+                        <option value='가구·인테리어'>가구·인테리어</option>
+                        <option value='식품'>식품</option>
+                        <option value='육아·출산'>육아·출산</option>
+                        <option value='반려동물'>반려동물</option>
+                        <option value='기타'>기타</option>
+                    </select>
+                    <input type='submit' class='searchBtn' value='검색'>
+                </form>
+                {%if 'nickname' not in session%}
+                <input type='button' value='회원가입' class='button' style='right: 25%;background: #ffd659;' onclick="location.href='{{url_for('signUp')}}'">
+                <input type='button' value='로그인' class='button' style='right: 15%;background: #ffd659;' onclick="location.href='{{url_for('signIn')}}'">
+            {%else%}
+            <div class='button' style='right: 25%; text-align:end;'><b>{{session['nickname']}}</b>님 <br>접속 중</div>
+            <input type='button' value='로그아웃' class='button' style='right: 15%;background: #ffd659;' onclick="location.href='{{url_for('signOut')}}'">
+            {%endif%}
+        </header>
+        <nav>
+            <ul>
+                <span><a href='{{url_for('search', keyword='all')}}'>게시물 보기</a></span>
+                {%if 'nickname' in session%}
+                    <span><a href='{{url_for('register')}}'>게시물 등록</a></span>
+                    <span><a href='{{url_for('profile', nickname=session['nickname'])}}'>게시물 관리</a></span>
+                    <span><a href='{{url_for('follow', nickname=session['nickname'])}}'>팔로우 보기</a></span>
+                {%else%}
+                    <span><a href='{{url_for('warning', type='register')}}'>게시물 등록</a></span>
+                    <span><a href='{{url_for('warning', type='profile')}}'>게시물 관리</a></span>
+                    <span><a href='{{url_for('warning', type='follow')}}'>팔로우 보기</a></span>
+                {%endif%}
+
+            </ul>
+        </nav>
+        <div class='body'>
+            <div class='body' style='width:70%; height:10%; left:15%; background-color:white; top:0%;'>
+                {%if keyword=='all'%}
+                <div class='body' style='width:70%; height:50%; left:15%;font-family: Malgun Gothic; background-color:white; top:3%; font-size:large;'><b>전체 상품</b></div>
+                {%else%}
+                <div class='body' style='width:70%; height:50%; left:15%;font-family: Malgun Gothic; background-color:white; top:3%; font-size:large;'><b>'{{keyword}}' 검색 결과</b></div>
+                {%endif%}
+            </div>
+            <div class='body' style='width:70%; height:85%; left:15%; background-color:white; top:10%; overflow-y:scroll;'>
+                {%if keyword!='all' and list.count()==0%}
+                    <div class='container'>검색 결과가 없습니다.</div>
+                {%elif keyword=='all' and (list|length)==0%}
+                <div class='container'>등록된 상품이 없습니다.</div>
+                {%else%}
+
+                {%for product in list%}
+                    <a href='{{url_for('detail', id=product.id)}}'>
+                        <div class='container'>
+                            {%if product.p_image1!=''%}
+                            <img src="{{ url_for('static', filename = '/uploads/' + product.p_image1) }}" class='preview' style="left:5px">
+                            {%else%}
+                            <div class='preview'style="top:40%">이미지가 <br>없습니다</div>
+                            {%endif%}
+                            <pre class='title'>제목: {{product.p_title}}</pre>
+                            {%if product.p_soldOut==False%}
+                            <pre class='cost'>가격: {{product.p_price}}</pre>
+                            {%else%}
+                            <img src="{{ url_for('static', filename = 'end.png') }}" class='preview' style='height:100px;width:100px;left:4px;'>
+                            <pre class='cost' style="color:red">가격: 판매 완료</pre>
+                            {%endif%}
+                            <pre class='seller'>판매자: {{product.p_seller}}</pre>
+                            <hr>
+                        </div>
+                    </a>
+                {%endfor%}
+                {%endif%}
+            </div>
+        </div>
+
+
+
+
+
+    </body>
+</html>

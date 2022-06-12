@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="{{ url_for('static', filename = 'register.css') }}">
+        {% with messages=get_flashed_messages()%}
+        {% if messages %}
+            <script>
+                alert("{{messages[-1]}}")
+            </script>
+        {% endif %}
+        {%endwith%}
+
+    </head>
+    <body>
+        <header>
+                <a href="{{ url_for('home')}}">
+                    <img class='logo' src="{{ url_for('static', filename = 'logo.png') }}">
+                </a>
+                <form class='searchBar' action='{{url_for('search',keyword='keyword')}}' method='POST'>
+                    <select name='searchBar' class='searchTxt'>
+                        <option selected hidden value='default'>키워드 검색</option>
+                         <option value='패션·미용'>패션·미용</option>
+                        <option value='디지털·가전'>디지털·가전</option>
+                        <option value='스포츠·차량'>스포츠·차량</option>
+                        <option value='음반·악기'>음반·악기</option>
+                        <option value='완구'>완구</option>
+                        <option value='가구·인테리어'>가구·인테리어</option>
+                        <option value='식품'>식품</option>
+                        <option value='육아·출산'>육아·출산</option>
+                        <option value='반려동물'>반려동물</option>
+                        <option value='기타'>기타</option>
+                    </select>
+                    <input type='submit' class='searchBtn' style='background: #ffd659;'value='검색'>
+                </form>
+                {%if 'nickname' not in session%}
+                <input type='button' value='회원가입' class='button' style='right: 25%' onclick="location.href='{{url_for('signUp')}}'">
+                <input type='button' value='로그인' class='button' style='right: 15%' onclick="location.href='{{url_for('signIn')}}'">
+            {%else%}
+            <div class='button' style='right: 25%; text-align:end;'><b>{{session['nickname']}}</b>님 <br>접속 중</div>
+            <input type='button' value='로그아웃' class='button' style='right: 15%;background: #ffd659;' onclick="location.href='{{url_for('signOut')}}'">
+            {%endif%}
+        </header>
+        <nav>
+            <ul>
+                <span><a href='{{url_for('search', keyword='all')}}'>게시물 보기</a></span>
+                {%if 'nickname' in session%}
+                    <span><a href='{{url_for('register')}}'>게시물 등록</a></span>
+                    <span><a href='{{url_for('profile', nickname=session['nickname'])}}'>게시물 관리</a></span>
+                    <span><a href='{{url_for('follow', nickname=session['nickname'])}}'>팔로우 보기</a></span>
+                {%else%}
+                    <span><a href='{{url_for('warning', type='register')}}'>게시물 등록</a></span>
+                    <span><a href='{{url_for('warning', type='profile')}}'>게시물 관리</a></span>
+                    <span><a href='{{url_for('warning', type='follow')}}'>팔로우 보기</a></span>
+                {%endif%}
+
+            </ul>
+        </nav>
+        <div class='body'>
+            <div class='body' style='width:70%; height:100%; left:15%; background-color:ffd659; top:0%;'>
+                <div style='width:100%; height:10%; left:15%; top:3%; position:absolute; font-size:large;'><b>게시물 업로드</b></div>
+                <form action='{{url_for('register')}}' method='POST' enctype = "multipart/form-data">
+                    <div class='button' style='right:86%; width:12%; top:9%; text-align:end;'><br><b>상품 이름</div>
+                    <textarea name='p_title' class='title' value={{title}} ></textarea>
+                    <div class='button' style='right:86%; top:16%;width:12%; text-align:end;'><br><b>검색 키워드</div>
+                    <textarea name='p_price' type='text' class='cost' value={{price}} ></textarea>
+                    <div class='button' style='right:86%; top:23%;width:12%; text-align:end;'><br><b>상품 금액</div>
+                    <select name='p_keyword' class='keyword'>
+                        <option selected hidden value='default'>키워드</option>
+                        <option value='패션·미용'>패션·미용</option>
+                        <option value='디지털·가전'>디지털·가전</option>
+                        <option value='스포츠·차량'>스포츠·차량</option>
+                        <option value='음반·악기'>음반·악기</option>
+                        <option value='완구'>완구</option>
+                        <option value='가구·인테리어'>가구·인테리어</option>
+                        <option value='식품'>식품</option>
+                        <option value='육아·출산'>육아·출산</option>
+                        <option value='반려동물'>반려동물</option>
+                        <option value='기타'>기타</option>
+                    </select>
+                    <textarea name='p_description' class='description' placeholder='설명' value={{description}}></textarea>
+                    <input name='p_image1' type='file' class='file' accept=".jpg, .jpeg, .png" style='top:70%;'>
+
+
+                    <input type='submit' class='submit' value='업로드'>
+                </form>
+            </div>
+        </div>
+
+
+
+
+
+    </body>
+</html>
